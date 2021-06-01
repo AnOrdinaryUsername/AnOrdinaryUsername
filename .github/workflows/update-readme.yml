@@ -1,0 +1,37 @@
+name: Build README
+
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: "0 23 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout project source code
+      - uses: actions/checkout@v2
+
+      - name: Use NodeJs 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: "14.x"
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-js-${{ hashFiles('package-lock.json') }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate updated README file
+        run: npm start
+
+      - name: Commit and Push new README.md to the repository
+        uses: mikeal/publish-to-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
