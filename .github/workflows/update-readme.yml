@@ -1,4 +1,4 @@
-name: Update README
+name: Build README
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
     - cron: "0 23 * * *"
 
 jobs:
-  update:
+  build:
     runs-on: ubuntu-latest
     steps:
       # Checkout project source code
@@ -22,18 +22,14 @@ jobs:
       - name: Cache npm dependencies
         uses: actions/cache@v2
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          path: node_modules
+          key: ${{ runner.os }}-js-${{ hashFiles('package-lock.json') }}
 
       - name: Install dependencies
         run: npm install
 
       - name: Generate updated README file
         run: npm start
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Commit and Push new README.md to the repository
         uses: mikeal/publish-to-github-action@master

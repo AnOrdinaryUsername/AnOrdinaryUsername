@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node .github/actions/update-readme.js"
+    "start": "node index.js",
+    "devstart": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -18,8 +19,11 @@
   },
   "homepage": "https://github.com/AnOrdinaryUsername/AnOrdinaryUsername#readme",
   "dependencies": {
-    "@octokit/action": "^3.10.1",
+    "@octokit/rest": "^18.5.5",
     "dotenv": "^10.0.0",
     "mustache": "^4.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
   }
 }

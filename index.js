@@ -1,10 +1,12 @@
 require("dotenv").config();
 const Mustache = require("mustache");
 const fs = require("fs");
-const { Octokit } = require("@octokit/action");
+const { Octokit } = require("@octokit/rest");
 
 const octokit = new Octokit({
+  auth: process.env.GH_ACCESS_TOKEN,
   userAgent: "readme v1.0.0",
+  baseUrl: "https://api.github.com",
   log: {
     warn: console.warn,
     error: console.error,
