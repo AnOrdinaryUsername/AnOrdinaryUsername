@@ -1,4 +1,4 @@
-name: Build README
+name: Update README
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
     - cron: "0 23 * * *"
 
 jobs:
-  build:
+  update:
     runs-on: ubuntu-latest
     steps:
       # Checkout project source code
@@ -32,6 +32,8 @@ jobs:
 
       - name: Generate updated README file
         run: npm start
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Commit and Push new README.md to the repository
         uses: mikeal/publish-to-github-action@master
