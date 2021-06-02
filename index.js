@@ -14,6 +14,7 @@ const octokit = new Octokit({
 });
 
 async function grabDataFromAllRepositories() {
+  // https://docs.github.com/en/rest/reference/repos#list-repositories-for-the-authenticated-user
   const request = await octokit
     .request("GET /user/repos")
     .then((repos) => repos);
@@ -26,8 +27,40 @@ function calculateTotalStars(data) {
   return totalStars;
 }
 
-async function calculateTotalCommits(data) {
-  // TODO
+async function calculateTotalCommitsInPastYear(data) {
+  const requestPromises = [];
+
+  for (let i = 0; i < data.length; i++) {
+    const options = {
+      owner: data[i].owner.login,
+      repo: data[i].name,
+    };
+
+    // https://docs.github.com/en/rest/reference/repos#get-the-last-year-of-commit-activity
+    const repoStats = octokit.request(
+      "GET /repos/{owner}/{repo}/stats/commit_activity",
+      options
+    );
+
+    requestPromises.push(repoStats);
+  }
+
+  const totalCommits = await Promise.all(requestPromises).then((repos) => {
+    let total = 0;
+
+    for (let i = 0; i < repos.length; ++i) {
+      const weeksInAYear = repos[i].data.length;
+
+      for (let j = 0; j < weeksInAYear; ++j) {
+        const totalCommitsInWeek = repos[i].data[j].total;
+        total += totalCommitsInWeek;
+      }
+    }
+
+    return total;
+  });
+
+  return totalCommits;
 }
 
 async function updateReadme(userData) {
@@ -46,8 +79,11 @@ async function main() {
   const repoData = await grabDataFromAllRepositories();
 
   const totalStars = calculateTotalStars(repoData);
+  const totalCommitsInPastYear = await calculateTotalCommitsInPastYear(
+    repoData
+  );
 
-  await updateReadme({ totalStars });
+  await updateReadme({ totalStars, totalCommitsInPastYear });
 }
 
 main();
