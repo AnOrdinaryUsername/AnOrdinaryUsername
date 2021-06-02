@@ -11,7 +11,6 @@ OS: Arch Linux x86_64
 Shell: zsh 5.7.1
 Pronouns: He/Him
 Location: Artesia, CA
-Degree: B.Sc. Computer Science (ongoing)
 Frameworks: React
 Languages: Javascript, Typescript,
            HTML5, CSS3
