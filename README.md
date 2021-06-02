@@ -17,7 +17,7 @@ Languages: Javascript, Typescript,
 Learning: Node.js, Express, PostgresSQL,
           Three.js, CPP
 Hobbies: Gardening, Cooking, Gaming
-Commits: 898
+Commits: 1303
 Stars: 3
 Discord: RandomPotato#1377
 ```
