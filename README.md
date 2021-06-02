@@ -6,7 +6,7 @@
 
 ```csharp
 anordinaryusername@github
---------------------
+-------------------------
 OS: Arch Linux x86_64
 Shell: zsh 5.7.1
 Pronouns: He/Him
@@ -17,8 +17,8 @@ Languages: Javascript, Typescript,
 Learning: Node.js, Express, PostgresSQL,
           Three.js, CPP
 Hobbies: Gardening, Cooking, Gaming
-Commits: 917
-Stars: 2
+Commits: 898
+Stars: 3
 Discord: RandomPotato#1377
 ```
 <p align="left">
