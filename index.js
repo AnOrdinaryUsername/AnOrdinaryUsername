@@ -78,9 +78,9 @@ async function getTotalCommits(requests, contributor, lastYear) {
     let total = 0;
 
     repos.forEach((repo) => {
-      const indexOfContributor = repo.data.findIndex(
-        (item) => item.author.login === contributor
-      );
+      const indexOfContributor = repo.data
+        .map((item) => item.author.login)
+        .indexOf(contributor);
 
       if (indexOfContributor !== -1) {
         const olderThanAYear = (week) => {
