@@ -28,34 +28,78 @@ function calculateTotalStars(data) {
 }
 
 async function calculateTotalCommitsInPastYear(data) {
-  const requestPromises = [];
+  const contributorRequests = [];
+  const githubUsername = process.env.GH_USERNAME;
+  const today = new Date();
+
+  const previousYear = {
+    year: today.getFullYear() - 1,
+    month: today.getMonth(),
+    day: today.getDate(),
+    hour: today.getHours(),
+    minutes: today.getMinutes(),
+    seconds: today.getSeconds(),
+  };
+
+  const lastYear = new Date(Date.UTC(...Object.values(previousYear)));
 
   for (let i = 0; i < data.length; i++) {
+    const repo = data[i];
+
     const options = {
-      owner: data[i].owner.login,
-      repo: data[i].name,
+      owner: githubUsername,
+      repo: repo.name,
     };
 
-    // https://docs.github.com/en/rest/reference/repos#get-the-last-year-of-commit-activity
-    const repoStats = octokit.request(
-      "GET /repos/{owner}/{repo}/stats/commit_activity",
-      options
-    );
+    const lastRepoUpdate = new Date(repo.updated_at);
 
-    requestPromises.push(repoStats);
+    if (lastRepoUpdate > lastYear) {
+      // https://docs.github.com/en/rest/reference/repos#get-all-contributor-commit-activity
+      const repoStats = octokit.request(
+        "GET /repos/{owner}/{repo}/stats/contributors",
+        options
+      );
+
+      contributorRequests.push(repoStats);
+    }
   }
 
-  const totalCommits = await Promise.all(requestPromises).then((repos) => {
+  const totalCommits = await getTotalCommits(
+    contributorRequests,
+    githubUsername,
+    lastYear
+  );
+
+  return totalCommits;
+}
+
+async function getTotalCommits(requests, contributor, lastYear) {
+  const totalCommits = await Promise.all(requests).then((repos) => {
     let total = 0;
 
-    for (let i = 0; i < repos.length; ++i) {
-      const weeksInAYear = repos[i].data.length;
+    repos.forEach((repo) => {
+      const indexOfContributor = repo.data.findIndex(
+        (item) => item.author.login === contributor
+      );
 
-      for (let j = 0; j < weeksInAYear; ++j) {
-        const totalCommitsInWeek = repos[i].data[j].total;
-        total += totalCommitsInWeek;
+      if (indexOfContributor !== -1) {
+        const olderThanAYear = (week) => {
+          // week.w -> Start of the week, given as a Unix timestamp
+          const MILLISECONDS = week.w * 1000;
+          const startOfWeek = new Date(MILLISECONDS);
+          return startOfWeek > lastYear;
+        };
+
+        const newestWeeks =
+          repo.data[indexOfContributor].weeks.filter(olderThanAYear);
+
+        // week.c -> Number of commits
+        total += newestWeeks.reduce(
+          (totalCommits, week) => totalCommits + week.c,
+          0
+        );
       }
-    }
+    });
 
     return total;
   });
