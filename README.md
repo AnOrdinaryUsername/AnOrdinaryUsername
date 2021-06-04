@@ -12,12 +12,12 @@ Shell: zsh 5.7.1
 Pronouns: He/Him
 Location: Artesia, CA
 Frameworks: React
-Languages: Javascript, Typescript,
-           HTML5, CSS3
-Learning: Node.js, Express, PostgresSQL,
-          Three.js, CPP
+Languages: JavaScript, TypeScript,
+             HTML, CSS
+Learning: Node.js, Express, PostgreSQL,
+           Three.js, CPP
 Hobbies: Gardening, Cooking, Gaming
-Commits: 852
+Commits: 883
 Stars: 3
 Discord: RandomPotato#1377
 ```
