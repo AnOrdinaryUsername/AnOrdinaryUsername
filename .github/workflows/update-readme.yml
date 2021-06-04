@@ -34,6 +34,7 @@ jobs:
         run: npm start
         env:
           GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+          GH_USERNAME: ${{ secrets.GH_USERNAME }}
 
       - name: Commit and Push new README.md to the repository
         uses: mikeal/publish-to-github-action@master
