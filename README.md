@@ -13,11 +13,11 @@ Pronouns: He/Him
 Location: Artesia, CA
 Frameworks: React
 Languages: JavaScript, TypeScript,
-             HTML, CSS
+           HTML, CSS
 Learning: Node.js, Express, PostgreSQL,
-           Three.js, CPP
+          Three.js, CPP
 Hobbies: Gardening, Cooking, Gaming
-Commits: 883
+Commits: 884
 Stars: 3
 Discord: RandomPotato#1377
 ```
