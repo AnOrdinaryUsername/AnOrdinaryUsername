@@ -15,15 +15,13 @@ const octokit = new Octokit({
 
 async function grabDataFromAllRepositories() {
   // https://docs.github.com/en/rest/reference/repos#list-repositories-for-the-authenticated-user
-  const request = await octokit
-    .request("GET /user/repos")
-    .then((repos) => repos);
+  const request = await octokit.request("GET /user/repos");
   return request.data;
 }
 
 function calculateTotalStars(data) {
   const stars = data.map((repo) => repo.stargazers_count);
-  const totalStars = stars.reduce((prev, curr) => prev + curr, 0);
+  const totalStars = stars.reduce((sum, curr) => sum + curr, 0);
   return totalStars;
 }
 
@@ -43,9 +41,7 @@ async function calculateTotalCommitsInPastYear(data) {
 
   const lastYear = new Date(Date.UTC(...Object.values(previousYear)));
 
-  for (let i = 0; i < data.length; i++) {
-    const repo = data[i];
-
+  data.forEach((repo) => {
     const options = {
       owner: githubUsername,
       repo: repo.name,
@@ -62,7 +58,7 @@ async function calculateTotalCommitsInPastYear(data) {
 
       contributorRequests.push(repoStats);
     }
-  }
+  });
 
   const totalCommits = await getTotalCommits(
     contributorRequests,
@@ -73,35 +69,30 @@ async function calculateTotalCommitsInPastYear(data) {
   return totalCommits;
 }
 
-async function getTotalCommits(requests, contributor, lastYear) {
-  const totalCommits = await Promise.all(requests).then((repos) => {
-    let total = 0;
+async function getTotalCommits(requests, contributor, cutoffDate) {
+  const repos = await Promise.all(requests);
+  let totalCommits = 0;
 
-    repos.forEach((repo) => {
-      const indexOfContributor = repo.data
-        .map((item) => item.author.login)
-        .indexOf(contributor);
+  repos.forEach((repo) => {
+    const contributorName = (item) => item.author.login === contributor;
+    const indexOfContributor = repo.data.findIndex(contributorName);
 
-      if (indexOfContributor !== -1) {
-        const olderThanAYear = (week) => {
-          // week.w -> Start of the week, given as a Unix timestamp
-          const MILLISECONDS = week.w * 1000;
-          const startOfWeek = new Date(MILLISECONDS);
-          return startOfWeek > lastYear;
-        };
+    if (indexOfContributor !== -1) {
+      const youngerThanCutoffDate = (week) => {
+        // week.w -> Start of the week, given as a Unix timestamp (which is in seconds)
+        const MILLISECONDS_IN_A_SECOND = 1000;
+        const milliseconds = week.w * MILLISECONDS_IN_A_SECOND;
+        const startOfWeek = new Date(milliseconds);
+        return startOfWeek > cutoffDate;
+      };
 
-        const newestWeeks =
-          repo.data[indexOfContributor].weeks.filter(olderThanAYear);
+      const newestWeeks = repo.data[indexOfContributor].weeks.filter(
+        youngerThanCutoffDate
+      );
 
-        // week.c -> Number of commits
-        total += newestWeeks.reduce(
-          (totalCommits, week) => totalCommits + week.c,
-          0
-        );
-      }
-    });
-
-    return total;
+      // week.c -> Number of commits in a week
+      totalCommits += newestWeeks.reduce((sum, week) => sum + week.c, 0);
+    }
   });
 
   return totalCommits;
@@ -127,7 +118,9 @@ async function main() {
     repoData
   );
 
-  await updateReadme({ totalStars, totalCommitsInPastYear });
+  // Hex color codes for the color blocks
+  const colors = ["474342", "fbedf6", "c9594d", "f8b9b2", "ae9c9d"];
+  await updateReadme({ totalStars, totalCommitsInPastYear, colors });
 }
 
 main();
