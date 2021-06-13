@@ -51,7 +51,7 @@ async function calculateTotalCommits(data, cutoffDate) {
     }
   });
 
-  totalCommits = await getTotalCommits(
+  const totalCommits = await getTotalCommits(
     contributorsRequests,
     githubUsername,
     cutoffDate
