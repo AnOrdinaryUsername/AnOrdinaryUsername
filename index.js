@@ -43,12 +43,8 @@ async function calculateTotalCommits(data, cutoffDate) {
 
     const lastRepoUpdate = new Date(repo.updated_at);
 
-    if (!cutoffDate) {
+    if (!cutoffDate || lastRepoUpdate > cutoffDate) {
       // https://docs.github.com/en/rest/reference/repos#get-all-contributor-commit-activity
-      const repoStats = octokit.rest.repos.getContributorsStats(options);
-
-      contributorsRequests.push(repoStats);
-    } else if (lastRepoUpdate > cutoffDate) {
       const repoStats = octokit.rest.repos.getContributorsStats(options);
 
       contributorsRequests.push(repoStats);
@@ -73,10 +69,10 @@ async function getTotalCommits(requests, contributor, cutoffDate) {
     const indexOfContributor = repo.data.findIndex(contributorName);
 
     if (indexOfContributor !== -1) {
-      const personStats = repo.data[indexOfContributor];
+      const contributorStats = repo.data[indexOfContributor];
       totalCommits += !cutoffDate
-        ? computeCommitsFromStart(personStats)
-        : computeCommitsBeforeCutoff(personStats, cutoffDate);
+        ? computeCommitsFromStart(contributorStats)
+        : computeCommitsBeforeCutoff(contributorStats, cutoffDate);
     }
   });
 
