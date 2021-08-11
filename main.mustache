@@ -8,7 +8,7 @@
 anordinaryusername@github
 -------------------------
 OS: Arch Linux x86_64
-Shell: zsh 5.7.1
+Shell: zsh 5.8
 Pronouns: He/Him
 Location: Artesia, CA
 Frameworks: React
