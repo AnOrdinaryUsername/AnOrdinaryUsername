@@ -18,7 +18,7 @@ Learning: Node.js, Express, PostgreSQL,
           Three.js, CPP
 Hobbies: Gardening, Cooking, Gaming
 Commits: 953
-Stars: 13
+Stars: 14
 Discord: RandomPotato#1377
 ```
 <p align="left">
